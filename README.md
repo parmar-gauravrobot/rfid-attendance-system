@@ -1,332 +1,203 @@
-```md
-# 📡 Smart RFID Attendance System (MERN + IoT)
+# RFID Attendance Management System
 
-A full-stack **RFID-based Smart Attendance System** built using the **MERN stack** and **ESP8266 (NodeMCU)**.  
-This system provides **real-time attendance tracking**, **role-based dashboards**, and **CSV export functionality**.
+A complete full-stack RFID attendance platform using React, Node.js, Express, MongoDB, JWT, Chart.js, and ESP32 + RC522.
 
----
+## Tech Stack
+- Frontend: React + Vite + Chart.js
+- Backend: Node.js + Express + JWT
+- Database: MongoDB (Mongoose)
+- Hardware: ESP32 + RC522 RFID Reader
 
-## 🧠 Project Overview
-
-This project automates attendance using **RFID technology + IoT + Web Dashboard**.
-
-When a student scans an RFID card:
-1. UID is read via MFRC522  
-2. ESP8266 sends data to backend  
-3. Backend validates & stores attendance  
-4. Dashboard updates **in real-time ⚡**
-
----
-
-## ⚙️ Tech Stack
-
-### 💻 Frontend
-- React.js
-- Chart.js
-- React Icons
-- Modern CSS (Glass UI)
-
-### 🛠️ Backend
-- Node.js
-- Express.js
-- MongoDB (Mongoose)
-- JWT Authentication
-
-### 📡 IoT Hardware
-- ESP8266 (NodeMCU)
-- MFRC522 RFID Module
-- RFID Cards
-- LCD Display (16x2)
-- Buzzer 🔊
-- LED 💡
-
----
-
-## 🔐 Role-Based System
-
-### 👨‍💼 Admin / Faculty
-- Manage students (CRUD)
-- Assign RFID cards
-- View attendance records
-- Analytics dashboard
-- Export attendance (CSV)
-
-### 👨‍🎓 Student
-- View personal dashboard
-- Check attendance percentage
-- Change password securely
-
----
-
-## ⚡ Real-Time Workflow
-
+## Project Structure
+```text
+rfid-attendance-system/
+  backend/
+    .env.example
+    package.json
+    src/
+      app.js
+      server.js
+      config/db.js
+      controllers/
+        authController.js
+        studentController.js
+        attendanceController.js
+      middleware/
+        auth.js
+        authorize.js
+      models/
+        User.js
+        Student.js
+        Attendance.js
+      routes/
+        authRoutes.js
+        studentRoutes.js
+        attendanceRoutes.js
+      utils/
+        seedFaculty.js
+  frontend/
+    .env.example
+    index.html
+    package.json
+    vite.config.js
+    src/
+      main.jsx
+      App.jsx
+      index.css
+      api/client.js
+      context/AuthContext.jsx
+      components/
+        Navbar.jsx
+        ProtectedRoute.jsx
+      pages/
+        LoginPage.jsx
+        faculty/FacultyDashboard.jsx
+        student/StudentDashboard.jsx
+  hardware/
+    esp32_rc522_attendance.ino
+    README.md
 ```
 
-RFID Card → ESP8266 → Backend API → MongoDB → React Dashboard (Live)
+## Database Collections
+- `users`: `name`, `email`, `password`, `role`
+- `students`: `name`, `rollNumber`, `rfid_uid`, `userId`
+- `attendance`: `studentId`, `timestamp`, `date`
 
-````
+## API Endpoints
+- `POST /api/auth/login`
+- `POST /api/students`
+- `GET /api/students`
+- `POST /api/scan-rfid`
+- `GET /api/attendance`
+- `GET /api/attendance/student/:id`
+- `GET /api/attendance/export`
 
-- Instant attendance marking  
-- Live dashboard updates  
-- No page refresh needed  
+Additional helper endpoints:
+- `GET /api/attendance/me` (student dashboard)
+- `GET /api/attendance/analytics` (faculty charts)
 
----
+## Features
+### Authentication
+- JWT-based login system
+- Role-based access (`faculty`, `student`)
+- Separate faculty/student dashboards
 
-## 🔥 Key Features
+### Faculty Dashboard
+- Register student with `name`, `rollNumber`, `rfid_uid`, `email`, `password`
+- View all students
+- View and filter attendance by date
+- Export attendance to CSV
+- Charts:
+  - Daily attendance chart
+  - Attendance percentage per student
+  - Monthly attendance trend
 
-- ✅ RFID-based attendance  
-- ✅ Real-time updates ⚡  
-- ✅ Role-based authentication  
-- ✅ CSV export (Excel compatible)  
-- ✅ Analytics dashboard  
-- ✅ Secure password system  
-- ✅ Duplicate scan prevention  
+### Student Dashboard
+- Login with email and password
+- View personal attendance history
+- Attendance percentage display
+- Charts for distribution and monthly trend
 
----
+### RFID Flow
+- ESP32 reads UID from RC522
+- Sends UID to backend via `POST /api/scan-rfid`
+- Backend maps UID to student and marks attendance with timestamp
 
-## 📊 Dashboard Screens
+## Installation
+### 1) Clone and move into project
+```bash
+git clone <your-repo-url>
+cd rfid-attendance-system
+```
 
-### 🎓 Student Dashboard
-
-::contentReference[oaicite:0]{index=0}
-
-
-- View attendance percentage  
-- Total days, present, absent  
-- Monthly insights  
-
----
-
-### 🧑‍💼 Admin Dashboard
-
-::contentReference[oaicite:1]{index=1}
-
-
-- Total students  
-- Attendance overview  
-- Daily attendance chart  
-- Top students  
-
----
-
-### 👨‍🎓 Student Management
-
-::contentReference[oaicite:2]{index=2}
-
-
-- Add / edit / delete students  
-- Assign RFID UID  
-- Attendance percentage tracking  
-
----
-
-### 📋 Attendance Page
-
-::contentReference[oaicite:3]{index=3}
-
-
-- Filter by date  
-- Search students  
-- Export CSV 📁  
-
----
-
-### 📊 Analytics Dashboard
-
-::contentReference[oaicite:4]{index=4}
-
-
-- Attendance trends  
-- Student performance charts  
-- Monthly analytics  
-
----
-
-## 📁 CSV Export Feature
-
-- Export attendance data in `.csv` format  
-- Open in Excel / Google Sheets  
-- Useful for reports & records  
-
----
-
-## 🔌 Hardware Connections
-
-### 📡 RFID (MFRC522 → ESP8266)
-
-| MFRC522 | ESP8266 |
-|--------|--------|
-| SDA    | D8     |
-| SCK    | D5     |
-| MOSI   | D7     |
-| MISO   | D6     |
-| RST    | D3     |
-
----
-
-### 🔊 Buzzer
-- Connected to D4  
-- ✔️ Success / Error feedback  
-
----
-
-### 💡 LED
-- Connected to D2  
-- 🟢 Success  
-- 🔴 Error  
-
----
-
-### 📺 LCD (16x2 I2C)
-
-| LCD | ESP8266 |
-|----|--------|
-| SDA | D2 |
-| SCL | D1 |
-
-- Displays scan result  
-- Shows student name  
-
----
-
-## 📦 Installation
-
-### 🔧 Backend
-
+### 2) Backend setup
 ```bash
 cd backend
 npm install
-````
-
-Create `.env`:
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_secret
+copy .env.example .env
 ```
 
+Update `backend/.env`:
+- `MONGO_URI`
+- `JWT_SECRET`
+- `RFID_DEVICE_KEY`
+- `CORS_ORIGIN`
+
+Seed faculty account:
+```bash
+npm run seed:faculty
+```
+
+Run backend:
 ```bash
 npm run dev
 ```
 
----
-
-### 🔧 Frontend
-
+### 3) Frontend setup
 ```bash
-cd frontend
+cd ../frontend
 npm install
-npm start
+copy .env.example .env
+npm run dev
 ```
 
----
+Frontend runs on `http://localhost:5173`.
 
-### 🔧 IoT Setup
-
-* Install Arduino IDE
-
-* Install libraries:
-
-  * MFRC522
-  * ESP8266WiFi
-  * LiquidCrystal_I2C
-
-* Update:
-
-  * WiFi credentials
-  * API URL
-
-Upload code
-
----
-
-## 🔐 API Endpoints
-
-### Auth
-
-* POST `/api/auth/login`
-* PUT `/api/students/change-password`
-
-### Students
-
-* GET `/api/students`
-* POST `/api/students`
-* PUT `/api/students/:id`
-* DELETE `/api/students/:id`
-
-### Attendance
-
-* POST `/api/scan-rfid`
-* GET `/api/attendance/analytics`
-
----
-
-## 🔐 Security
-
-* JWT Authentication
-* Password hashing (bcrypt)
-* Protected routes
-* `.env` configuration
-
----
-
-## 🚀 Future Improvements
-
-* Forgot Password (OTP / Email)
-* WebSocket real-time updates
-* Mobile app
-* Multi-institution SaaS
-
----
-
-## 🧑‍💻 Author
-
-**Gaurav Parmar**
-GitHub: [https://github.com/parmar-gauravrobot](https://github.com/parmar-gauravrobot)
-
----
-
-## ⭐ Support
-
-If you like this project:
-
-* ⭐ Star the repo
-* 🍴 Fork it
-* 🚀 Contribute
-
----
-
-## 📜 License
-
-For educational purposes only
-
+## .env Configuration
+### backend/.env
+```env
+PORT=5000
+MONGO_URI=mongodb://127.0.0.1:27017/rfid_attendance
+JWT_SECRET=replace_with_secure_secret
+JWT_EXPIRES_IN=1d
+RFID_DEVICE_KEY=replace_with_device_key
+CORS_ORIGIN=http://localhost:5173
+FACULTY_NAME=Admin Faculty
+FACULTY_EMAIL=faculty@example.com
+FACULTY_PASSWORD=faculty123
 ```
 
----
-
-# 🔥 BRO THIS IS 🔥🔥🔥
-
-Your repo now:
-- ✅ Looks like a **real SaaS product**
-- ✅ Shows **IoT + MERN integration**
-- ✅ Includes **real-time + CSV + analytics**
-- ✅ Perfect for **resume + interview**
-
----
-
-# 🚀 NEXT (OPTIONAL UPGRADE)
-
-If you want next level:
-- 📸 Use your **actual screenshots instead of placeholders**
-- 🎥 Add demo video
-- 🏆 Add badges (stars, tech stack)
-
----
-
-💬 Just say:  
-👉 “add real screenshots properly”  
-👉 “make README top 1% GitHub level”  
-
-We’ll push it to 🔥 **next level** 🚀
+### frontend/.env
+```env
+VITE_API_URL=http://localhost:5000/api
 ```
+
+## Running Locally
+1. Start MongoDB service
+2. Run backend (`npm run dev` in `backend/`)
+3. Run frontend (`npm run dev` in `frontend/`)
+4. Login as faculty using seeded credentials
+5. Register students with RFID UID + email/password
+6. Start ESP32 firmware and scan cards to mark attendance
+
+## Hardware Wiring (ESP32 + RC522)
+- `SDA (SS)` -> `GPIO5`
+- `SCK` -> `GPIO18`
+- `MOSI` -> `GPIO23`
+- `MISO` -> `GPIO19`
+- `RST` -> `GPIO22`
+- `3.3V` -> `3V3`
+- `GND` -> `GND`
+
+Important:
+- Use local backend IP in firmware (not `localhost`)
+- Keep `x-device-key` in ESP32 code equal to `RFID_DEVICE_KEY` in backend `.env`
+
+## ESP32 Firmware Setup
+1. Open `hardware/esp32_rc522_attendance.ino` in Arduino IDE.
+2. Install libraries:
+   - `MFRC522`
+   - `WiFi` (built-in for ESP32)
+   - `HTTPClient` (built-in)
+3. Set values in sketch:
+   - `ssid`
+   - `password`
+   - `apiEndpoint` (e.g., `http://192.168.1.10:5000/api/scan-rfid`)
+   - `deviceKey`
+4. Select ESP32 board and COM port.
+5. Upload and open Serial Monitor at `115200` baud.
+
+## Notes
+- `POST /api/scan-rfid` allows one attendance mark per student per date.
+- CSV export works with optional date filter.
+- If your PC firewall blocks incoming traffic, allow port `5000` for ESP32 access.
