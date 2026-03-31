@@ -274,6 +274,7 @@ Upload code
 
 **Gaurav Parmar**
 https://github.com/parmar-gauravrobot
+**Ayush Thakur**
 https://github.com/aayushthakur001/
 
 ---
